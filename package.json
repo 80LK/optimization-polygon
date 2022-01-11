@@ -1,0 +1,12 @@
+{
+  "name": "optimization-polygon",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.htm",
+  "scripts": {
+    "start": "serve"
+  },
+  "dependencies": {
+    "serve": "^13.0.2"
+  }
+}
