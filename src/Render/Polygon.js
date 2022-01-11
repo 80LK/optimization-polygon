@@ -1,29 +1,55 @@
+
+import RandomColor from "../RandomColor.js";
+import RenderPoint from "./Point.js";
+
 class RenderPolygon {
 	constructor(polygon) {
 		this.polygon = polygon;
+		this.color = RandomColor.get(polygon);
 	}
 
-	color = "#00ff00";
+
 	get fill() {
-		return this.color + "55";
+		return this.color + "33";
 	}
 
 	render(ctx, scale = 1) {
 		ctx.fillStyle = this.color;
-		this.points.forEach((point) => point.render(ctx, scale, 1));
+		const points = this.polygon.points;
+		const firstPoint = points[0];
+		if (!firstPoint) return;
+
+		points.forEach((point) => RenderPoint.render(point, ctx, scale, 1));
 
 		ctx.strokeStyle = this.color;
 		ctx.fillStyle = this.fill;
 		ctx.beginPath();
-		ctx.moveTo(0, 90 * scale);
-		ctx.lineTo(0, 80 * scale);
-		this.points.forEach((point) => {
+
+		ctx.moveTo(points[0].x * scale, points[0].y * scale)
+		for (let i = 1, l = points.length; i < l; i++) {
+			const point = points[i];
 			ctx.lineTo(point.x * scale, point.y * scale);
-		});
-		ctx.lineTo(160 * scale, 80 * scale);
-		ctx.lineTo(160 * scale, 90 * scale);
+		}
+		ctx.closePath();
+
 		ctx.stroke();
 		ctx.fill();
+
+
+		// 	if (scale < 3) return;
+		// 	ctx.fillStyle = "#000000";
+		// 	ctx.font = (3 * scale) + "px Arial";
+		// 	for (let i = 0, l = points.length; i < l; i++) {
+		// 		const point = points[i];
+		// 		const prevPoint = points[i == 0 ? l - 1 : i - 1];
+
+		// 		const d = Math.round(prevPoint.distToPoint(point) * 100) / 100;
+		// 		const x = (prevPoint.x - point.x) / 2;
+		// 		const y = (prevPoint.y - point.y) / 2;
+
+		// 		ctx.fillText(d, (prevPoint.x - x) * scale, (prevPoint.y - y) * scale);
+		// 		console.log("D", d, prevPoint.x, x, prevPoint.x + x);
+		// 	}
 	}
 
 	static render(polygon, ctx, scale = 1) {

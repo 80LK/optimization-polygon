@@ -5,7 +5,7 @@ class Range {
 	}
 
 	get length() {
-		return Math.abs(this.max - this.min);
+		return Math.abs(this.max - this.min) + 1;
 	}
 }
 

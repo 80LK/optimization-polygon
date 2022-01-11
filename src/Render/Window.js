@@ -2,10 +2,17 @@ import Point from "../Model/Point.js";
 import RenderPoint from "./Point.js";
 import Range from "../Range.js";
 
-class EventSetScreen extends Event {
+class SetScreenEvent extends Event {
 	constructor(screen) {
 		super("setScreen");
 		this.screen = screen;
+	}
+}
+class RenderEvent extends Event {
+	constructor(ctx, scale) {
+		super("render");
+		this.ctx = ctx;
+		this.scale = scale;
 	}
 }
 
@@ -21,6 +28,8 @@ class Window extends EventTarget {
 	init(selector = "body", screens = 10) {
 		this.createDOM(selector);
 		this.initScreens(screens);
+
+		this.setScreen(0);
 	}
 
 	createDOM(selector = "body") {
@@ -80,6 +89,14 @@ class Window extends EventTarget {
 			panel.appendChild(this.$nextBtn);
 			return panel;
 		})());
+
+		window.addEventListener("keydown", e => {
+			if (e.code == "ArrowRight") {
+				this.nextScreen()
+			} else if (e.code == "ArrowLeft") {
+				this.prevScreen()
+			}
+		})
 	}
 
 	initScreens(screens = 10) {
@@ -93,8 +110,6 @@ class Window extends EventTarget {
 		this.currentScreenIndex = 0;
 
 		this.$frames.textContent = screens;
-		this.setScreen(0);
-		this.render();
 	}
 
 	nextScreen() {
@@ -106,6 +121,7 @@ class Window extends EventTarget {
 
 	setScreen(screen) {
 		if (screen < 0 || screen > this.screens.length - 1) return;
+
 		this.currentScreenIndex = screen;
 
 		this.$curFrame.textContent = this.currentScreenIndex + 1;
@@ -115,8 +131,8 @@ class Window extends EventTarget {
 			.map((e) => `(${e.x}, ${e.y})`)
 			.join("</br>");
 
+		this.dispatchEvent(new SetScreenEvent(screen))
 		this.render();
-		this.dispatchEvent(new EventSetScreen(screen))
 	}
 
 	get currentScreen() {
@@ -124,13 +140,15 @@ class Window extends EventTarget {
 	}
 
 	render() {
-		this.ctx.fillStyle = "#000000ff";
+		this.ctx.fillStyle = "#555555ff";
 		this.ctx.fillRect(0, 0, this.size.x * this.scale, this.size.y * this.scale);
 
 		this.ctx.fillStyle = "#ff0000ff";
 		this.currentScreen.forEach(point => RenderPoint.render(point, this.ctx, this.scale, 2));
+
+		this.dispatchEvent(new RenderEvent(this.ctx, this.scale))
 	}
 }
 
 export default Window;
-export { EventSetScreen }
+export { SetScreenEvent, RenderEvent }
