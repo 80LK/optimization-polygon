@@ -9,7 +9,7 @@ Array.prototype.clone = function () {
 class Polygon {
 	constructor(points = []) {
 		this.points = [];
-		this.outerPoints = []
+		this.rotates = []
 		this.push(points);
 	}
 
@@ -82,6 +82,7 @@ class Polygon {
 		// this.points = [p0].concat(points);
 		this.points = [p0, points[0]];
 
+
 		const m = points.length;
 
 		for (let i = 1; i < m; i++) {
@@ -90,7 +91,7 @@ class Polygon {
 				this.points.pop();
 				j -= 1;
 			}
-			this.points.push(points[i]);
+			this.rotates[this.points.push(points[i])] = this.rotate(this.points[j - 2], this.points[j - 1], points[i]);
 		}
 	}
 

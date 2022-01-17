@@ -12,61 +12,52 @@ class App {
 		this.pushPoints = this.pushPoints.bind(this);
 	}
 
+	filterPoints(polygon, point) {
+		if (polygon.length != 0) {
+			// const d = polygon.distToPoint(point);
+			// if (d > 10) return true;
+		}
+
+		polygon.push(point);
+		return false;
+	}
+
 	async pushPoints(event) {
 		if (this.lastScreen >= event.screen) return;
 
 		this.lastScreen = event.screen;
 
-		// let points = this.window.currentScreen.map(e => e.clone());
-		// console.log(this.window.screens)
-		this.groups[0] = new Polygon();
-		// this.groups[0].push(this.window.screens.reduce((r, e) => r.concat(e), []));
-		this.groups[0].push(this.window.currentScreen);
+		let points = this.window.currentScreen.map(e => e.clone());;
 
-		// this.groups.forEach(polygon => {
-		// 	points = points.filter(point => {
-		// 		if (polygon.length != 0 && !polygon.havePoint(point)) {
-		// 			const d = polygon.distToPoint(point);
-		// 			if (d > 10) return true;
-		// 		}
 
-		// 		polygon.push(point);
-		// 		return false;
-		// 	});
-		// });
+		this.groups.forEach(polygon => {
+			points = points.filter(point => this.filterPoints(polygon, point));
+		});
 
-		// while (points.length > 0) {
-		// 	const polygon = new Polygon();
-		// 	points = points.filter(point => {
-		// 		if (polygon.length != 0 && !polygon.havePoint(point)) {
-		// 			const d = polygon.distToPoint(point);
-		// 			if (d > 10) return true;
-		// 		}
+		while (points.length > 0) {
+			const polygon = new Polygon();
+			points = points.filter(point => this.filterPoints(polygon, point));
+			this.groups.push(polygon);
+		}
 
-		// 		polygon.push(point);
-		// 		return false;
-		// 	});
-		// 	this.groups.push(polygon);
-		// }
+		for (let i = 0; i < this.groups.length - 1; i++) {
+			const polygon = this.groups[i];
+			for (let j = i + 1; j < this.groups.length; j++) {
+				const check = this.groups[j];
+				if (check.points.findIndex(point => {
+					if (polygon.length != 0) {
+						if (polygon.havePoint(point)) return true;
+						const d = polygon.distToPoint(point);
+						if (d <= 10) return true;
+					}
 
-		// for (let i = 0; i < this.groups.length - 1; i++) {
-		// 	const polygon = this.groups[i];
-		// 	for (let j = i + 1; j < this.groups.length; j++) {
-		// 		const check = this.groups[j];
-		// 		if (check.points.findIndex(point => {
-		// 			if (polygon.length != 0) {
-		// 				if (polygon.havePoint(point)) return true;
-		// 				const d = polygon.distToPoint(point);
-		// 				if (d <= 10) return true;
-		// 			}
-
-		// 			return false;
-		// 		}) != -1) {
-		// 			polygon.push(check.points);
-		// 			this.groups = this.groups.filter(p => p != check);
-		// 		}
-		// 	}
-		// }
+					return false;
+				}) != -1) {
+					polygon.push(check.points);
+					this.groups = this.groups.filter(p => p != check);
+				}
+			}
+		}
 
 		return;
 
