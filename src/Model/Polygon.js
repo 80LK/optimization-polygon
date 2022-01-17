@@ -25,6 +25,13 @@ class Polygon {
 			this.points.push(points)
 		}
 
+		const _points = this.points;
+		this.points = [];
+		_points.forEach(e => {
+			const i = this.points.findIndex(r => r.x == e.x && r.y == e.y);
+			if (i == -1) this.points.push(e);
+		});
+
 		// this.convexHull();
 		// this.graham();
 		// this.jarvis();
@@ -72,17 +79,19 @@ class Polygon {
 			return 0;
 		});
 
-		this.points = [p0].concat(points);
-		// this.points = [p0, points[0]];
+		// this.points = [p0].concat(points);
+		this.points = [p0, points[0]];
 
-		// const m = points.length;
+		const m = points.length;
 
-		// for (let i = 1; i < m; i++) {
-
-		// }
-
-
-
+		for (let i = 1; i < m; i++) {
+			let j = this.points.length;
+			while (this.rotate(this.points[j - 2], this.points[j - 1], points[i]) < 0) {
+				this.points.pop();
+				j -= 1;
+			}
+			this.points.push(points[i]);
+		}
 	}
 
 

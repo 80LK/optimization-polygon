@@ -20,7 +20,8 @@ class App {
 		// let points = this.window.currentScreen.map(e => e.clone());
 		// console.log(this.window.screens)
 		this.groups[0] = new Polygon();
-		this.groups[0].push(this.window.screens.reduce((r, e) => r.concat(e), []));
+		// this.groups[0].push(this.window.screens.reduce((r, e) => r.concat(e), []));
+		this.groups[0].push(this.window.currentScreen);
 
 		// this.groups.forEach(polygon => {
 		// 	points = points.filter(point => {
