@@ -1,0 +1,17 @@
+.app {
+	display: grid;
+	grid-template-areas: ". points polypoints"
+		". points polypoints";
+	grid-template-areas: ". points"
+		". points";
+	grid-template-rows: var(--height_canvas, 90px) auto;
+	grid-gap: 10px;
+}
+
+#points {
+	grid-area: points;
+}
+
+button {
+	user-select: none;
+}

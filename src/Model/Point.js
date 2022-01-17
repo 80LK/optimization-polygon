@@ -29,6 +29,23 @@ class Point {
 		const y = this.y - point.y;
 		return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))
 	}
+
+	clone() {
+		return new Point(this.x, this.y);
+	}
+
+	minus(point) {
+		const p = this.clone()
+		p.x -= point.x;
+		p.y -= point.y;
+		return p;
+	}
+
+	polarAngle(point) {
+		let res = Math.atan2(point.y - this.y, point.x - this.x);
+		if (res < 0) res += 2 * Math.PI;
+		return res;
+	}
 }
 
 export default Point;

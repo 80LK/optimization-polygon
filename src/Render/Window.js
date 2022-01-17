@@ -1,6 +1,7 @@
 import Point from "../Model/Point.js";
 import RenderPoint from "./Point.js";
 import Range from "../Range.js";
+import sleep from "../sleep.js";
 
 class SetScreenEvent extends Event {
 	constructor(screen) {
@@ -21,8 +22,12 @@ class Window extends EventTarget {
 		super();
 		this.scale = scale;
 		this.size = size;
+		this.sleeping = 0;
+		this.disableRenderToLastFrame = false;
 		this.nextScreen = this.nextScreen.bind(this);
 		this.prevScreen = this.prevScreen.bind(this);
+		this.toLastScreen = this.toLastScreen.bind(this);
+		this.toFirstScreen = this.toFirstScreen.bind(this);
 	}
 
 	init(selector = "body", screens = 10) {
@@ -45,6 +50,15 @@ class Window extends EventTarget {
 		this.$curFrame = new Text("0");
 		// this.$curFrame.textContent
 		this.$frames = new Text("0");
+
+		this.$firstBtn = document.createElement("button");
+		this.$firstBtn.innerText = "Первый кадр";
+		this.$firstBtn.addEventListener("click", this.toFirstScreen);
+
+
+		this.$lastBtn = document.createElement("button");
+		this.$lastBtn.innerText = "Последний кадр";
+		this.$lastBtn.addEventListener("click", this.toLastScreen);
 
 		this.$nextBtn = document.createElement("button");
 		this.$nextBtn.innerText = "Следующий кадр";
@@ -84,23 +98,37 @@ class Window extends EventTarget {
 
 			panel.appendChild(document.createElement("br"));
 
+			panel.appendChild(this.$firstBtn);
+			panel.appendChild(new Text(" "));
 			panel.appendChild(this.$prevBtn);
 			panel.appendChild(new Text(" "));
 			panel.appendChild(this.$nextBtn);
+			panel.appendChild(new Text(" "));
+			panel.appendChild(this.$lastBtn);
 			return panel;
 		})());
 
 		window.addEventListener("keydown", e => {
-			if (e.code == "ArrowRight") {
-				this.nextScreen()
-			} else if (e.code == "ArrowLeft") {
-				this.prevScreen()
+			switch (e.code) {
+				case "ArrowUp":
+					this.toFirstScreen()
+					break;
+
+				case "ArrowDown":
+					this.toLastScreen()
+					break;
+				case "ArrowRight":
+					this.nextScreen()
+					break;
+				case "ArrowLeft":
+					this.prevScreen()
+					break;
 			}
 		})
 	}
 
 	initScreens(screens = 10) {
-		const genPoints = Point.generatorPoints(new Range(10, this.size.x - 10), new Range(-3, 3), new Range(70, 80));
+		const genPoints = Point.generatorPoints(new Range(10, this.size.x - 10), new Range(-3, 3), new Range(50, 80));
 
 		this.screens = [];
 
@@ -108,6 +136,7 @@ class Window extends EventTarget {
 			this.screens.push(genPoints());
 
 		this.currentScreenIndex = 0;
+		this.totalScreen = screens;
 
 		this.$frames.textContent = screens;
 	}
@@ -116,6 +145,7 @@ class Window extends EventTarget {
 		this.setScreen(this.currentScreenIndex + 1);
 	}
 	prevScreen() {
+		this.runNext = false;
 		this.setScreen(this.currentScreenIndex - 1);
 	}
 
@@ -135,11 +165,29 @@ class Window extends EventTarget {
 		this.render();
 	}
 
+	toFirstScreen() {
+		this.runNext = false;
+		this.setScreen(0);
+	}
+	async toLastScreen() {
+
+		this.disableRender = this.disableRenderToLastFrame;
+		this.runNext = true;
+		for (let i = this.currentScreenIndex; i < this.totalScreen && this.runNext; i++) {
+			this.nextScreen();
+			await sleep(this.sleeping);
+		}
+
+		this.disableRender = false;
+		this.render();
+	}
+
 	get currentScreen() {
 		return this.screens[this.currentScreenIndex];
 	}
 
 	render() {
+		if (this.disableRender == true) return;
 		this.ctx.fillStyle = "#555555ff";
 		this.ctx.fillRect(0, 0, this.size.x * this.scale, this.size.y * this.scale);
 

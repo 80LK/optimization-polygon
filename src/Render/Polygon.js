@@ -35,21 +35,26 @@ class RenderPolygon {
 		ctx.stroke();
 		ctx.fill();
 
+		this.polygon.points.forEach(point => {
+			ctx.fillStyle = "lime";
+			RenderPoint.render(point, ctx, scale, .5)
+		});
 
-		// 	if (scale < 3) return;
-		// 	ctx.fillStyle = "#000000";
-		// 	ctx.font = (3 * scale) + "px Arial";
-		// 	for (let i = 0, l = points.length; i < l; i++) {
-		// 		const point = points[i];
-		// 		const prevPoint = points[i == 0 ? l - 1 : i - 1];
 
-		// 		const d = Math.round(prevPoint.distToPoint(point) * 100) / 100;
-		// 		const x = (prevPoint.x - point.x) / 2;
-		// 		const y = (prevPoint.y - point.y) / 2;
+		// if (scale < 3) return;
+		// ctx.fillStyle = "#000000";
+		// ctx.font = (3 * scale) + "px Arial";
+		// for (let i = 0, l = points.length; i < l; i++) {
+		// 	const point = points[i];
+		// 	const prevPoint = points[i == 0 ? l - 1 : i - 1];
 
-		// 		ctx.fillText(d, (prevPoint.x - x) * scale, (prevPoint.y - y) * scale);
-		// 		console.log("D", d, prevPoint.x, x, prevPoint.x + x);
-		// 	}
+		// 	const d = Math.round(prevPoint.distToPoint(point) * 100) / 100;
+		// 	const x = (prevPoint.x - point.x) / 2;
+		// 	const y = (prevPoint.y - point.y) / 2;
+
+		// 	ctx.fillText(d, (prevPoint.x - x) * scale, (prevPoint.y - y) * scale);
+		// 	console.log("D", d, prevPoint.x, x, prevPoint.x + x);
+		// }
 	}
 
 	static render(polygon, ctx, scale = 1) {
