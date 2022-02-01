@@ -1,3 +1,5 @@
+import Point from "./Point.js";
+
 class Vector {
 	constructor(firstPoint, secondPoint) {
 		this.first = firstPoint;
@@ -5,7 +7,7 @@ class Vector {
 	}
 
 	get x() {
-		return this.second.x - this.first.x
+		return this.second.x - this.first.x;
 	}
 	get y() {
 		return this.second.y - this.first.y;
@@ -16,20 +18,16 @@ class Vector {
 	}
 
 	distToPoint(point) {
-		/** https://ru.stackoverflow.com/questions/721414 */
+		// http://algolist.ru/maths/geom/distance/pointline.php
+		const w = new Vector(this.first, point);
+		const c1 = Vector.dot(w, this);
+		if (c1 <= 0) return point.distToPoint(this.first);
+		const c2 = Vector.dot(this, this);
+		if (c2 <= c1) return point.distToPoint(this.second);
+		const b = c1 / c2;
 
-		// this = (P0, P1)
-		// w0 = (P, P0)
-		// w1 = (P, P1)
-		const w0 = new Vector(point, this.first);
-		const w1 = new Vector(point, this.second);
-		if (Vector.dot(w0, this) <= 0) {
-			return point.distToPoint(this.first);
-		} else if (Vector.dot(w1, this) >= 0) {
-			return point.distToPoint(this.second);
-		} else {
-			return ((this.first.y - this.second.y) * point.x + (this.first.x - this.second.x) * point.y + (this.first.x * this.second.y - this.second.x * this.first.y)) / this.first.distToPoint(this.second);
-		}
+		const Pb = new Point(this.first.x + b * this.x, this.first.y + b * this.y);
+		return point.distToPoint(Pb);
 	}
 }
 

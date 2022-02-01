@@ -25,8 +25,8 @@ class Point {
 	}
 
 	distToPoint(point) {
-		const x = this.x - point.x;
-		const y = this.y - point.y;
+		const x = point.x - this.x;
+		const y = point.y - this.y;
 		return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))
 	}
 

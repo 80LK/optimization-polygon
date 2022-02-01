@@ -43,7 +43,7 @@ class RenderPolygon {
 
 		// if (!this.rotates) return;
 		ctx.fillStyle = "#000000";
-		ctx.font = (3 * scale) + "px Arial";
+		ctx.font = "15px Arial";
 		for (let i = 0, l = points.length; i < l; i++) {
 			const d = this.polygon.rotates[i];
 			if (!d) continue;
@@ -55,6 +55,12 @@ class RenderPolygon {
 
 			ctx.fillText(d, (prevPoint.x - x) * scale, (prevPoint.y - y) * scale);
 			console.log("D", d, prevPoint.x, x, prevPoint.x + x);
+		}
+
+		ctx.textAlign = "center";
+		for (let i = 0, l = points.length; i < l; i++) {
+			const point = points[i];
+			ctx.fillText(`(${point.x};${point.y})`, point.x * scale, (point.y + 3) * scale);
 		}
 	}
 

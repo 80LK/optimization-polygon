@@ -32,18 +32,12 @@ class Polygon {
 			if (i == -1) this.points.push(e);
 		});
 
-		// this.convexHull();
-		// this.graham();
-		// this.jarvis();
-		// this.QuickHull();
-
-		// this.graham();
-		this.test()
+		this.graham()
 
 		return this;
 	}
 
-	test() {
+	graham() {
 		const l_points = this.points.length;
 		if (l_points < 4) return;
 
@@ -59,7 +53,6 @@ class Polygon {
 		}
 
 		const p0 = points[0];
-		console.log(p0, points);
 
 		points.shift();
 		points.sort((a, b) => {
@@ -78,6 +71,29 @@ class Polygon {
 
 			return 0;
 		});
+		const l = points.length;
+		points = points.filter((e, i) => {
+			const nextI = l == i + 1 ? 0 : i + 1;
+			const prevI = (i == 0 ? l : i) - 1;
+			try {
+				const prev = points[prevI];
+				const next = points[nextI];
+
+				const v = new Vector(
+					next,
+					prev
+				);
+
+				if ((next.x == prev.x && prev.x == e.x) || (next.y == prev.y && prev.y == e.y))
+					return false;
+				const d = v.distToPoint(e);
+
+				return d != 0;
+			} catch (e) {
+				console.log(points, nextI, prevI)
+				return false;
+			}
+		});
 
 		// this.points = [p0].concat(points);
 		this.points = [p0, points[0]];
@@ -91,7 +107,7 @@ class Polygon {
 				this.points.pop();
 				j -= 1;
 			}
-			this.rotates[this.points.push(points[i])] = this.rotate(this.points[j - 2], this.points[j - 1], points[i]);
+			this.rotates[this.points.push(points[i]) - 1] = this.rotate(this.points[j - 2], this.points[j - 1], points[i]);
 		}
 	}
 
@@ -101,138 +117,7 @@ class Polygon {
 		return (b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x);
 		// return (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y);
 	}
-	sort(a, b) {
-		const c = 1;
-		const d = -c;
-		if (a.x < b.x) {
-			return c;
-		} else if (a.x > b.x) {
-			return d;
-		} else if (a.y < b.y) {
-			return c;
-		} else if (a.y > b.y) {
-			return d;
-		}
-		return 0;
-	}
 
-	convexHull() {
-		const l_points = this.points.length;
-		if (l_points < 4) return this.outerPoints = this.points;
-
-
-		const __f = this.points[0].x;
-		console.log("convexHull", __f, l_points)
-
-		const points = this.points.sort(this.sort);
-		console.log(points);
-
-		const fPoint = points[0];
-		const lPoint = points[l_points - 1];
-		const up = [], down = [];
-		up.push(fPoint);
-		down.push(fPoint);
-
-		for (let i = 1; i < l_points; i++) {
-			const point = points[i];
-			if (i == l_points - 1 || this.rotate(fPoint, point, lPoint) < 0) {
-				let l_up = up.length;
-				while (l_up >= 2 && !(this.rotate(up[l_up - 2], up[l_up - 1], point) < 0)) {
-					up.pop();
-					l_up--;
-				}
-
-				up.push(point);
-			}
-			if (i == l_points - 1 || this.rotate(fPoint, point, lPoint) > 0) {
-				let l_down = down.length;
-				while (l_down >= 2 && !(this.rotate(down[l_down - 2], down[l_down - 1], point) > 0)) {
-					down.pop();
-					l_down--;
-				}
-
-				up.push(point);
-			}
-		}
-
-		this.outerPoints = [];
-		for (let i = 0, l = up.length; i < l; ++i)
-			this.outerPoints.push(up[i]);
-
-		for (let i = down.length - 2; i > 0; --i)
-			this.outerPoints.push(down[i]);
-
-		console.group("end convexHull", __f);
-		console.log(this.outerPoints.length)
-		console.log(this.outerPoints)
-		console.log(up)
-		console.log(down)
-		console.groupEnd();
-	}
-
-	graham() {
-		const l_points = this.points.length;
-		if (l_points < 4) return;
-		const points = this.points.map(e => e);
-
-		// https://www.pvsm.ru/algoritmy/8755
-		for (let i = 1; i < l_points; i++)
-			if (points[i].x < points[0].x)
-				[points[i], points[0]] = [points[0], points[i]];
-
-
-		for (let i = 2; i < l_points; i++) {
-			let j = i;
-
-			while (j > 1 && this.rotate(points[0], points[j - 1], points[j]) < 0) {
-				[points[j], points[j - 1]] = [points[j - 1], points[j]];
-				j -= 1;
-			}
-		}
-
-		// this.points = points;
-		this.points = [points[0], points[1]];
-		for (let i = 2; i < l_points; i++) {
-			while (this.rotate(this.points[this.points.length - 2], this.points[this.points.length - 1], points[i]) < 0)
-				this.points.pop();
-			this.points.push(points[i]);
-		}
-	}
-
-	jarvis() {
-		const l_points = this.points.length;
-		if (l_points < 4) return;
-		let points = this.points.map(e => e);
-
-		for (let i = 1; i < l_points; i++)
-			if (points[i].x < points[0].x)
-				[points[i], points[0]] = [points[0], points[i]]
-
-		this.points = [points[0]];
-		points.shift();
-		points.push(this.points[0]);
-
-		while (true) {
-			let right = 0;
-			const l = points.length;
-			const _l = this.points.length;
-
-			for (let i = 1; i < l; i++)
-				if (this.rotate(this.points[_l - 1], points[right], points[i]) < 0)
-					break;
-
-			if (points[right] == this.points[0]) break;
-			else {
-				this.points.push(points[right]);
-				points = points.filter(point => point != points[right])
-			}
-		}
-	}
-
-
-	QuickHull() {
-
-	}
 
 	havePoint(point) {
 		const count = this.points.length;
@@ -305,33 +190,6 @@ class Polygon {
 				if (dist > _dist) dist = _dist;
 			}
 			return dist;
-
-			// let dist = Infinity;
-			// const l = this.points.length;
-
-			// for (let i = 0; i < l; i++) {
-			// 	const peerPoint = this.points[(i == 0 ? l : i) - 1];
-			// 	const currentPoint = this.points[i];
-
-			// 	/** https://ru.stackoverflow.com/questions/721414 */
-			// 	const dBAx = currentPoint.x - peerPoint.x;
-			// 	const dBAy = currentPoint.y - peerPoint.y;
-
-			// 	const t = (() => {
-			// 		const t = ((point.x - peerPoint.x) * dBAx + (point.y - peerPoint.y) * dBAy) / (Math.pow(dBAx, 2) + Math.pow(dBAy, 2));
-			// 		if (t < 0) return 0;
-			// 		if (t > 1) return 1;
-			// 		return t;
-			// 	})();
-
-			// 	const distToPoint = Math.sqrt(
-			// 		Math.pow(peerPoint.x - point.x + dBAx * t, 2) +
-			// 		Math.pow(peerPoint.y - point.y + dBAy * t, 2)
-			// 	);
-
-			// 	if (dist > distToPoint) dist = distToPoint;
-			// }
-			// return dist;
 		}
 	}
 }

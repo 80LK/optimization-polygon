@@ -1,5 +1,6 @@
 import Point from "./Model/Point.js";
 import Polygon from "./Model/Polygon.js";
+import Vector from "./Model/Vector.js";
 import RenderPolygon from "./Render/Polygon.js";
 import Window from "./Render/Window.js";
 
@@ -14,8 +15,8 @@ class App {
 
 	filterPoints(polygon, point) {
 		if (polygon.length != 0) {
-			// const d = polygon.distToPoint(point);
-			// if (d > 10) return true;
+			const d = polygon.distToPoint(point);
+			if (d > 10) return true;
 		}
 
 		polygon.push(point);
@@ -27,7 +28,7 @@ class App {
 
 		this.lastScreen = event.screen;
 
-		let points = this.window.currentScreen.map(e => e.clone());;
+		let points = this.window.currentScreen;
 
 
 		this.groups.forEach(polygon => {
@@ -109,3 +110,14 @@ const DRTLF = params.get("drtlf") == "true";
 const app = new App(new Point(width, height), scale).start(screens);
 app.sleep = sleep;
 app.disableRenderToLastFrame = DRTLF;
+
+window.test = () => {
+	const a = new Point(1, 1);
+	const b = new Point(2, 1);
+	const c = new Point(3, 1);
+	if (a.x == b.x && b.x == c.x || a.y == b.y && b.y == c.y) return true;
+
+
+
+	return (c.x - a.x) / (b.x - a.x) - (c.y - a.y) / (b.y - a.y) == 0
+};
