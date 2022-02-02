@@ -12,7 +12,7 @@ class RendererPoint extends Renderer {
 	public render(ctx: CanvasRenderingContext2D): void {
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
-		ctx.ellipse(this.point.x, this.point.y, this.size, this.size, 0, 0, 360);
+		ctx.ellipse(this.point.x, this.point.y, this.size, this.size, 0, 0, 2 * Math.PI);
 		ctx.fill();
 	}
 }
