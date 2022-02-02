@@ -56,6 +56,8 @@ class App {
 		);
 
 		this.screens = generator.generatePages(10, 10);
+
+		this.onKeydown = this.onKeydown.bind(this);
 	}
 
 	public attach(query: string = "body") {
@@ -64,6 +66,26 @@ class App {
 		root.appendChild(this.root);
 
 		this.setScreen(0);
+
+		window.addEventListener("keydown", this.onKeydown)
+	}
+
+	private onKeydown(e: KeyboardEvent) {
+		switch (e.code) {
+			case "ArrowUp":
+				this.setScreen(0)
+				break;
+
+			case "ArrowDown":
+				this.setScreen(this.screens.length - 1)
+				break;
+			case "ArrowRight":
+				this.nextScreen()
+				break;
+			case "ArrowLeft":
+				this.prevScreen()
+				break;
+		}
 	}
 
 	private currentScreen = 0;
