@@ -23,8 +23,18 @@ class Polygon {
 	}
 
 	public havePoint(point: Point): boolean {
+		// https://ru.stackoverflow.com/qustions/464787
 		let flag = false;
-
+		const l = this._points.length;
+		let j = l - 1;
+		for (let i = 0; i < l; i++) {
+			if (
+				(this._points[i].y < point.y && this._points[j].y >= point.y || this._points[j].y < point.y && this._points[i].y >= point.y) ||
+				(this._points[i].x + (point.y - this._points[i].y) / (this._points[j].y - this._points[i].y) * (this._points[j].x - this._points[i].x) < point.x)
+			)
+				flag = !flag;
+			j = i;
+		}
 		return flag;
 	}
 
