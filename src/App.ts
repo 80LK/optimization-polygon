@@ -55,7 +55,10 @@ class App {
 			new Point(this.width - 10, this.height - 10)
 		);
 
-		this.screens = generator.generatePages(10, 10);
+		this.screens = generator.generatePages(
+			this.params.getIntNotNaN("pages", 10),
+			this.params.getIntNotNaN("points", 10)
+		);
 
 		this.onKeydown = this.onKeydown.bind(this);
 	}
