@@ -69,7 +69,6 @@ class App {
 	private nextScreen() {
 		try { this.setScreen(this.currentScreen + 1); } catch (e) { }
 	}
-
 	private prevScreen() {
 		try { this.setScreen(this.currentScreen - 1); } catch (e) { }
 	}
