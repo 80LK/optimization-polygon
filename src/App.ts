@@ -3,6 +3,7 @@ import Point from "./model/Point.js";
 import Params from "./utils/Params.js";
 import RendererPoint from "./view/RendererPoint.js";
 import RendererView from "./view/RendererView.js";
+import "./utils/String.ext.js";
 
 class App {
 	private params = new Params(location.href);
@@ -10,7 +11,7 @@ class App {
 	private screens: Point[][];
 	private renderer: RendererView;
 	private root: HTMLElement;
-	private $currentPage: Text;
+	private $currentPage: HTMLSpanElement;
 
 	private readonly width: number;
 	private readonly height: number;
@@ -33,20 +34,38 @@ class App {
 
 		const btnsPanel = document.createElement("div");
 		{
+			const $btn = document.createElement("button");
+			$btn.textContent = "First page";
+			$btn.onclick = () => this.setScreen(0);
+			btnsPanel.appendChild($btn);
+		}
+		btnsPanel.appendChild(new Text(" "));
+		{
 			const prevBtn = document.createElement("button");
 			prevBtn.textContent = "Prev page";
 			prevBtn.onclick = () => this.prevScreen();
 			btnsPanel.appendChild(prevBtn);
 		}
+		btnsPanel.appendChild(new Text(" "));
 		{
-			this.$currentPage = new Text(" 0/0 ");
+			this.$currentPage = document.createElement("span");
+			this.$currentPage.style.fontFamily = "monospace";
+			this.$currentPage.innerText = "0/0";
 			btnsPanel.appendChild(this.$currentPage);
 		}
+		btnsPanel.appendChild(new Text(" "));
 		{
 			const nextBtn = document.createElement("button");
 			nextBtn.textContent = "Next page";
 			nextBtn.onclick = () => this.nextScreen();
 			btnsPanel.appendChild(nextBtn);
+		}
+		btnsPanel.appendChild(new Text(" "));
+		{
+			const $btn = document.createElement("button");
+			$btn.textContent = "Last page";
+			$btn.onclick = () => this.setScreen(this.screens.length - 1);
+			btnsPanel.appendChild($btn);
 		}
 		this.root.appendChild(btnsPanel);
 
@@ -108,7 +127,7 @@ class App {
 		if (screen >= this.screens.length) throw new RangeError();
 
 		this.currentScreen = screen;
-		this.$currentPage.textContent = ` ${screen + 1}/${this.screens.length} `;
+		this.$currentPage.innerText = `${(screen + 1).toString().padLeft(this.screens.length.toString().length, "0")}/${this.screens.length}`;
 		this.renderer.removeAllChilds();
 		this.screens[screen].forEach(point => this.renderer.addChild(new RendererPoint(point)));
 		this.renderer.render();
