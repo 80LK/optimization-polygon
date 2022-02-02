@@ -73,17 +73,28 @@ class App {
 	private onKeydown(e: KeyboardEvent) {
 		switch (e.code) {
 			case "ArrowUp":
+			case "Home":
+			case "KeyW":
 				this.setScreen(0)
 				break;
 
 			case "ArrowDown":
+			case "End":
+			case "KeyS":
 				this.setScreen(this.screens.length - 1)
 				break;
 			case "ArrowRight":
+			case "PageUp":
+			case "KeyD":
 				this.nextScreen()
 				break;
 			case "ArrowLeft":
+			case "PageDown":
+			case "KeyA":
 				this.prevScreen()
+				break;
+			default:
+				console.log(e.code);
 				break;
 		}
 	}
