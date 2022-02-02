@@ -3,7 +3,7 @@ import Renderer from "./Renderer.js";
 
 class RendererPoint extends Renderer {
 	public color: string = "red";
-	public size: number = 5;
+	public size: number = 1;
 
 	public constructor(private point: Point) {
 		super();
