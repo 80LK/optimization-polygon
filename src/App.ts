@@ -1,3 +1,4 @@
+import GeneratorPoints from "./GeneratorPoints.js";
 import Point from "./model/Point.js";
 import Params from "./utils/Params.js";
 import RendererPoint from "./view/RendererPoint.js";
@@ -6,10 +7,13 @@ import RendererView from "./view/RendererView.js";
 class App {
 	private params = new Params(location.href);
 
-	private screens = [[new Point(10, 10)], [new Point(50, 50), new Point(60, 40)]];
+	private screens: Point[][];
 	private renderer: RendererView;
 	private root: HTMLElement;
 	private $currentPage: Text;
+
+	private readonly width: number;
+	private readonly height: number;
 
 	constructor() {
 		const scale = this.params.getIntNotNaN("scale", 1);
@@ -17,8 +21,8 @@ class App {
 
 		const canvasDiv = document.createElement("div");
 		const canvas = document.createElement("canvas");
-		canvas.width = this.params.getIntNotNaN("width", 160) * scale;
-		canvas.height = this.params.getIntNotNaN("height", 90) * scale;
+		canvas.width = (this.width = this.params.getIntNotNaN("width", 160)) * scale;
+		canvas.height = (this.height = this.params.getIntNotNaN("height", 90)) * scale;
 		canvasDiv.appendChild(canvas)
 		this.root.appendChild(canvasDiv);
 
@@ -45,6 +49,13 @@ class App {
 			btnsPanel.appendChild(nextBtn);
 		}
 		this.root.appendChild(btnsPanel);
+
+		const generator = new GeneratorPoints(
+			new Point(10, 10),
+			new Point(this.width - 10, this.height - 10)
+		);
+
+		this.screens = generator.generatePages(10, 10);
 	}
 
 	public attach(query: string = "body") {
