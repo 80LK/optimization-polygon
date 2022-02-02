@@ -78,7 +78,6 @@ class App {
 			this.params.getIntNotNaN("pages", 10),
 			this.params.getIntNotNaN("points", 10)
 		);
-
 		this.onKeydown = this.onKeydown.bind(this);
 	}
 
