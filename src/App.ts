@@ -5,6 +5,8 @@ import RendererPoint from "./view/RendererPoint.js";
 import RendererView from "./view/RendererView.js";
 import "./utils/String.ext.js";
 import SetPageEvent from "./SetPageEvent.js";
+import RendererGroup from "./view/RendererGroup.js";
+import PolygonBuilder from "./PolygonBuilder.js";
 
 class App extends EventTarget {
 	private params = new Params(location.href);
@@ -14,11 +16,15 @@ class App extends EventTarget {
 	private root: HTMLElement;
 	private $currentPage: HTMLSpanElement;
 
+	private rendererPoints = new RendererGroup();
+	private polygonBuilder: PolygonBuilder;
+
 	public readonly width: number;
 	public readonly height: number;
 	public readonly scale: number;
 	public readonly pages: number;
 	public readonly points: number;
+	public readonly dist: number;
 
 	constructor() {
 		super();
@@ -27,6 +33,9 @@ class App extends EventTarget {
 		this.points = this.params.getIntNotNaN("points", 10);
 		this.width = this.params.getIntNotNaN("width", 160);
 		this.height = this.params.getIntNotNaN("height", 90);
+		this.dist = this.params.getIntNotNaN("dist", 10);
+
+		this.polygonBuilder = new PolygonBuilder(this.dist);
 
 		this.root = document.createElement("div");
 		this.root.style.textAlign = "center";
@@ -42,6 +51,8 @@ class App extends EventTarget {
 		if (!ctx) throw new Error();
 		this.renderer = new RendererView(ctx, "black");
 		this.renderer.scale(this.scale);
+		this.renderer.add(this.rendererPoints);
+		this.renderer.add(this.polygonBuilder.RendererPolygon);
 
 		{ //Btns
 			const btnsPanel = document.createElement("div");
@@ -158,8 +169,9 @@ class App extends EventTarget {
 		this._currentScreen = screen;
 		this.$currentPage.innerText = `${(screen + 1).toString().padLeft(this.screens.length.toString().length, "0")}/${this.screens.length}`;
 		this.dispatchEvent(new SetPageEvent(screen))
-		this.renderer.removeAllChilds();
-		this.screens[screen].forEach(point => this.renderer.addChild(new RendererPoint(point)));
+
+		this.rendererPoints.removeAll();
+		this.screens[screen].forEach(point => this.rendererPoints.add(new RendererPoint(point)));
 		this.renderer.render();
 	}
 	private nextScreen() {

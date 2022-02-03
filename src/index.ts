@@ -13,8 +13,15 @@ function main() {
 
 	const list = document.querySelector("#list-points");
 	if (list) {
+		const lX = app.width.toString().length,
+			lY = app.height.toString().length;
 		app.addEventListener("setpage", (event) => {
-			list.innerHTML = app.currentScreen.map(point => `(${point.x};${point.y})`).join("<br/>");
+			list.innerHTML = app.currentScreen.map(
+				point => {
+					const x = point.x.toString().padLeft(lX);
+					const y = point.y.toString().padLeft(lY);
+					return `(${x}; ${y})`;
+				}).join("<br/>");
 		});
 	}
 
@@ -27,10 +34,6 @@ function main() {
 	setText("#info #cheight", app.height * app.scale);
 	setText("#info #pages", app.pages);
 	setText("#info #points", app.points);
-
-	const main = document.body.querySelector("main");
-	if (main) {
-		main.style.setProperty("--width-canvas", (app.width * app.scale) + "px");
-	}
+	setText("#info #dist", app.dist);
 }
 main();

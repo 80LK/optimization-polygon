@@ -1,7 +1,10 @@
 main {
-	--width-canvas: 160px;
 	display: grid;
 	grid-template-areas: ". . .";
-	grid-template-columns: var(--width-canvas) 100px auto;
+	grid-template-columns: max-content max-content auto;
 	grid-gap: 8px;
+}
+
+#list-points {
+	font-family: monospace;
 }

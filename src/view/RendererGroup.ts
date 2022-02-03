@@ -1,7 +1,7 @@
 import Renderer from "./Renderer.js";
 
 class RendererGroup<T extends Renderer = Renderer> extends Renderer {
-	private elements: Set<T> = new Set();
+	protected elements: Set<T> = new Set();
 
 	public render(ctx: CanvasRenderingContext2D): void {
 		this.elements.forEach(element => element.render(ctx));

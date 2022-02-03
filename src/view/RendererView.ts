@@ -1,21 +1,13 @@
 import Renderer from "./Renderer.js";
+import RendererGroup from "./RendererGroup.js";
 
-class RendererView {
-	private childs: Set<Renderer> = new Set();
+class RendererView extends RendererGroup {
 	// private readonly ctx: CanvasRenderingContext2D;
 	public constructor(
 		private readonly ctx: CanvasRenderingContext2D,
 		private readonly background: string = "transparent"
-	) { }
-
-	public addChild(element: Renderer) {
-		this.childs.add(element);
-	}
-	public removeChild(element: Renderer) {
-		this.childs.delete(element);
-	}
-	public removeAllChilds() {
-		this.childs.clear();
+	) {
+		super();
 	}
 
 	private _scale: number = 1;
@@ -24,7 +16,6 @@ class RendererView {
 		this.ctx.scale(dScale, dScale);
 		this._scale = scale;
 	}
-
 
 	public clear(x: number = 0, y: number = 0, width: number = this.ctx.canvas.width, height: number = this.ctx.canvas.height) {
 		const style = this.ctx.fillStyle;
@@ -35,9 +26,9 @@ class RendererView {
 		this.ctx.fillStyle = style;
 	}
 
-	public render() {
+	public render(): void {
 		this.clear();
-		this.childs.forEach(child => child.render(this.ctx));
+		super.render(this.ctx)
 	}
 }
 
