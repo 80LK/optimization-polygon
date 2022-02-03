@@ -31,7 +31,7 @@ class Polygon {
 
 			return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0)
 		}
-		// https://ru.stackoverflow.com/qustions/464787
+		// https://ru.stackoverflow.com/questions/464787
 		let flag = false;
 		let j = l - 1;
 		for (let i = 0; i < l; i++) {
