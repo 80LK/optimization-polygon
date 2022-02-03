@@ -23,9 +23,16 @@ class Polygon {
 	}
 
 	public havePoint(point: Point): boolean {
+		const l = this._points.length;
+		if (l == 3) {
+			const a = (this._points[0].x - point.x) * (this._points[1].y - this._points[0].y) - (this._points[1].x - this._points[0].x) * (this._points[0].y - point.y);
+			const b = (this._points[1].x - point.x) * (this._points[2].y - this._points[1].y) - (this._points[2].x - this._points[1].x) * (this._points[1].y - point.y);
+			const c = (this._points[2].x - point.x) * (this._points[0].y - this._points[2].y) - (this._points[0].x - this._points[2].x) * (this._points[2].y - point.y);
+
+			return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0)
+		}
 		// https://ru.stackoverflow.com/qustions/464787
 		let flag = false;
-		const l = this._points.length;
 		let j = l - 1;
 		for (let i = 0; i < l; i++) {
 			if (
