@@ -18,6 +18,15 @@ class App extends EventTarget {
 
 	private rendererPoints = new RendererGroup();
 	private polygonBuilder: PolygonBuilder;
+	private buildedScreen = -1;
+	private buildScreen(screen: number) {
+		if (this.buildedScreen >= screen) return;
+
+		for (let i = this.buildedScreen + 1; i <= screen; i++) {
+			this.polygonBuilder.push(this.getScreen(i));
+		}
+		this.buildedScreen = screen;
+	}
 
 	public readonly width: number;
 	public readonly height: number;
@@ -51,8 +60,8 @@ class App extends EventTarget {
 		if (!ctx) throw new Error();
 		this.renderer = new RendererView(ctx, "black");
 		this.renderer.scale(this.scale);
-		this.renderer.add(this.rendererPoints);
 		this.renderer.add(this.polygonBuilder.RendererPolygon);
+		this.renderer.add(this.rendererPoints);
 
 		{ //Btns
 			const btnsPanel = document.createElement("div");
@@ -165,10 +174,12 @@ class App extends EventTarget {
 	private setScreen(screen: number) {
 		if (screen < 0) throw new RangeError();
 		if (screen >= this.screens.length) throw new RangeError();
+		this.buildScreen(screen);
 
 		this._currentScreen = screen;
 		this.$currentPage.innerText = `${(screen + 1).toString().padLeft(this.screens.length.toString().length, "0")}/${this.screens.length}`;
 		this.dispatchEvent(new SetPageEvent(screen))
+
 
 		this.rendererPoints.removeAll();
 		this.screens[screen].forEach(point => this.rendererPoints.add(new RendererPoint(point)));

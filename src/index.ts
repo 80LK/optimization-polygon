@@ -35,5 +35,6 @@ function main() {
 	setText("#info #pages", app.pages);
 	setText("#info #points", app.points);
 	setText("#info #dist", app.dist);
+	console.log(app);
 }
 main();

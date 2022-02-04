@@ -44,6 +44,12 @@ class Point {
 		this._x /= n;
 		this._y /= n;
 	}
+
+	public polarAngle(point: Point) {
+		let res = Math.atan2(point.y - this.y, point.x - this.x);
+		if (res < 0) res += 2 * Math.PI;
+		return res;
+	}
 }
 
 
