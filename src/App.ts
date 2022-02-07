@@ -37,7 +37,7 @@ class App extends EventTarget {
 
 	constructor() {
 		super();
-		this.scale = this.params.getIntNotNaN("scale", 1);
+		this.scale = this.params.getIntNotNaN("scale", 3);
 		this.pages = this.params.getIntNotNaN("pages", 10);
 		this.points = this.params.getIntNotNaN("points", 10);
 		this.width = this.params.getIntNotNaN("width", 160);

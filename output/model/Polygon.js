@@ -161,24 +161,6 @@ class Polygon {
             return 0;
         });
         const l = points.length;
-        // points = points.filter((e, i) => {
-        // 	const nextI = l == i + 1 ? 0 : i + 1;
-        // 	const prevI = (i == 0 ? l : i) - 1;
-        // 	try {
-        // 		const prev = points[prevI];
-        // 		const next = points[nextI];
-        // 		const v = new Line(next, prev);
-        // 		if ((next.x == prev.x && prev.x == e.x) || (next.y == prev.y && prev.y == e.y))
-        // 			return false;
-        // 		const d = v.distToPoint(e);
-        // 		return d != 0;
-        // 	} catch (e) {
-        // 		console.log(points, nextI, prevI)
-        // 		return false;
-        // 	}
-        // });
-        // l = points.length;
-        // if (l < 1) return;
         this._points = [p0, points[0]];
         for (let i = 1; i < l; i++) {
             let j = this._points.length;

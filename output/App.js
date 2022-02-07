@@ -14,7 +14,7 @@ class App extends EventTarget {
         this.rendererPoints = new RendererGroup();
         this.buildedScreen = -1;
         this._currentScreen = 0;
-        this.scale = this.params.getIntNotNaN("scale", 1);
+        this.scale = this.params.getIntNotNaN("scale", 3);
         this.pages = this.params.getIntNotNaN("pages", 10);
         this.points = this.params.getIntNotNaN("points", 10);
         this.width = this.params.getIntNotNaN("width", 160);
