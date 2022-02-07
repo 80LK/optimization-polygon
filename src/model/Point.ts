@@ -1,4 +1,8 @@
 class Point {
+	static get zero() {
+		return new Point(0, 0);
+	}
+
 	constructor(private _x: number, private _y: number) { }
 
 	public get x() {

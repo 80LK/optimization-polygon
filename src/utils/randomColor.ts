@@ -8,9 +8,12 @@ const colors = [
 	"#ff00ff",
 	"#00ffff",
 	"#ff8000",
+	"#FFFFFF"
 ];
 
 export default function randomColor() {
-	const i = Math.floor(random(0, colors.length));
+	const i = random(0, colors.length);
 	return colors[i];
 }
+
+console.log(randomColor)

@@ -27,8 +27,15 @@ class Polygon {
 		this.graham()
 	}
 
-	public havePoint(point: Point): boolean {
+	public _havePoint(point: Point): boolean {
 		const l = this._points.length;
+		if (l == 0) return false;
+		if (l == 1)
+			return this._points[0].x == point.x && this._points[0].y == point.y;
+
+		if (l == 2)
+			return new Line(this._points[0], this._points[1]).distToPoint(point) == 0;
+
 		if (l == 3) {
 			const a = (this._points[0].x - point.x) * (this._points[1].y - this._points[0].y) - (this._points[1].x - this._points[0].x) * (this._points[0].y - point.y);
 			const b = (this._points[1].x - point.x) * (this._points[2].y - this._points[1].y) - (this._points[2].x - this._points[1].x) * (this._points[1].y - point.y);
@@ -36,6 +43,7 @@ class Polygon {
 
 			return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0)
 		}
+
 		// https://ru.stackoverflow.com/questions/464787
 		let flag = false;
 		let j = l - 1;
@@ -48,6 +56,70 @@ class Polygon {
 			j = i;
 		}
 		return flag;
+	}
+
+	//https://github.com/qt/qtbase/blob/dev/src/gui/painting/qpolygon.cpp#L55
+	private static isect_line(p1: Point, p2: Point, pos: Point, winding: number): number {
+		let x1 = p1.x;
+		let y1 = p1.y;
+		let x2 = p2.x;
+		let y2 = p2.y;
+		const y = pos.y;
+
+		let dir = 1;
+
+		if (y1 == y2) {
+			// ignore horizontal lines according to scan conversion rule
+			return winding;
+		} else if (y2 < y1) {
+			[x1, x2, y1, y2] = [x2, x1, y2, y1];
+			dir = -1;
+		}
+
+		if (y >= y1 && y < y2) {
+			const x = x1 + ((x2 - x1) / (y2 - y1)) * (y - y1);
+
+			// count up the winding number if we're
+			if (x <= pos.x) {
+				winding += dir;
+			}
+		}
+		return winding;
+	}
+
+	public havePoint(point: Point): boolean {
+		const l = this._points.length;
+		if (l == 0) return false;
+		if (l == 1)
+			return this._points[0].x == point.x && this._points[0].y == point.y;
+
+		if (l == 2)
+			return new Line(this._points[0], this._points[1]).distToPoint(point) == 0;
+
+		// if (l == 3) {
+		// 	const a = (this._points[0].x - point.x) * (this._points[1].y - this._points[0].y) - (this._points[1].x - this._points[0].x) * (this._points[0].y - point.y);
+		// 	const b = (this._points[1].x - point.x) * (this._points[2].y - this._points[1].y) - (this._points[2].x - this._points[1].x) * (this._points[1].y - point.y);
+		// 	const c = (this._points[2].x - point.x) * (this._points[0].y - this._points[2].y) - (this._points[0].x - this._points[2].x) * (this._points[2].y - point.y);
+
+		// 	return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0)
+		// }
+
+		// https://github.com/qt/qtbase/blob/dev/src/gui/painting/qpolygon.cpp#L818
+		let winding_number = 0;
+
+		let last_pt = this._points[0];
+		let last_start = this._points[0];
+		for (let i = 1; i < l; ++i) {
+			const e = this._points[i];
+			winding_number = Polygon.isect_line(last_pt, e, point, winding_number);
+			last_pt = e;
+		}
+
+		// implicitly close last subpath
+		if (last_pt != last_start)
+			winding_number = Polygon.isect_line(last_pt, last_start, point, winding_number);
+
+		return winding_number != 0;
 	}
 
 	public distToPoint(point: Point): number {
@@ -115,7 +187,29 @@ class Polygon {
 			return 0;
 		});
 
-		const l = points.length;
+		let l = points.length;
+		points = points.filter((e, i) => {
+			const nextI = l == i + 1 ? 0 : i + 1;
+			const prevI = (i == 0 ? l : i) - 1;
+			try {
+				const prev = points[prevI];
+				const next = points[nextI];
+
+				const v = new Line(next, prev);
+
+				if ((next.x == prev.x && prev.x == e.x) || (next.y == prev.y && prev.y == e.y))
+					return false;
+				const d = v.distToPoint(e);
+
+				return d != 0;
+			} catch (e) {
+				console.log(points, nextI, prevI)
+				return false;
+			}
+		});
+
+		l = points.length;
+		if (l < 1) return;
 
 		this._points = [p0, points[0]];
 

@@ -20,15 +20,51 @@ class PolygonBuilder {
 	private addPointInPolygon(point: Point, polygon: Polygon) {
 		if (polygon.length) {
 			const dist = polygon.distToPoint(point);
+			if (dist == 0) return false;
 			if (dist > this.distance) return true;
 		}
 		polygon.push(point);
 		return false;
 	}
 
+	private deletePolygon(polygon: Polygon) {
+		const renderer = this.mapRenderer.get(polygon);
+		if (renderer) {
+			this.RendererPolygon.remove(renderer)
+			this.mapRenderer.delete(polygon);
+		}
+	}
+	private addPolygon(polygon: Polygon) {
+		const renderer = new RendererPolygon(polygon);
+		const color = randomColor();
+		renderer.colorPoint = renderer.color = color;
+		renderer.background = color + "88";
+
+		this.RendererPolygon.add(renderer);
+		this.mapRenderer.set(polygon, renderer);
+	}
+
 	public push(points: Point[]) {
 		this.method_1(points);
 		// this.method_2(points);
+
+		this.mergePolygons();
+	}
+
+	private mergePolygons() {
+		const polygons = this.polygons;
+		for (let i = 0; i < polygons.length; i++) {
+			const polygon = polygons[i];
+			for (let j = i + 1; j < polygons.length; j++) {
+				const check = polygons[j];
+				const checkPoints = check.points;
+				const point = checkPoints.find(point => polygon.havePoint(point) || polygon.distToPoint(point) <= this.distance)
+				if (point) {
+					polygon.push(checkPoints);
+					this.deletePolygon(check);
+				}
+			}
+		}
 	}
 
 	private method_1(points: Point[]) {
@@ -45,13 +81,8 @@ class PolygonBuilder {
 			points = points.filter(point => this.addPointInPolygon(point, polygon));
 			// polygon.graham();
 
-			const renderer = new RendererPolygon(polygon);
-			renderer.background = (renderer.colorPoint = renderer.color = randomColor()) + "88";
-			this.RendererPolygon.add(renderer);
-			this.mapRenderer.set(polygon, renderer);
+			this.addPolygon(polygon)
 		}
-
-
 	}
 
 	private method_2(points: Point[]) {
@@ -68,7 +99,7 @@ class PolygonBuilder {
 			const l = groups.length;
 			for (let i = 1; i < l; i++) {
 				const polygon = groups[i];
-				this.mapRenderer.delete(polygon);
+				this.deletePolygon(polygon);
 				checkPolygon.push(polygon.points);
 			}
 			return false;
@@ -80,10 +111,7 @@ class PolygonBuilder {
 			points.shift();
 
 			points = points.filter(point => this.addPointInPolygon(point, polygon));
-			const renderer = new RendererPolygon(polygon);
-			renderer.background = (renderer.colorPoint = renderer.color = randomColor()) + "88";
-			this.RendererPolygon.add(renderer);
-			this.mapRenderer.set(polygon, renderer);
+			this.addPolygon(polygon);
 		}
 	}
 }

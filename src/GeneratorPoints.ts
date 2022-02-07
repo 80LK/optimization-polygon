@@ -5,7 +5,7 @@ class GeneratorPoints {
 	constructor(private min: Point, private max: Point) { }
 
 	public generate(count: number = 10): Point[] {
-		const points: Point[] = [];
+		const points: Point[] = [new Point(10, 10), new Point(20, 10), new Point(10, 20)];
 		for (; count > 0; count--)
 			points.push(new Point(random(this.min.x, this.max.x), random(this.min.y, this.max.y)));
 		return points;

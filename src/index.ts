@@ -1,5 +1,4 @@
 import App from "./App.js";
-import SetPageEvent from "./SetPageEvent.js";
 
 function setText(query: string, value: any) {
 	const el = document.querySelector(query);
