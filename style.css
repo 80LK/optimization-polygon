@@ -7,4 +7,5 @@ main {
 
 #list-points {
 	font-family: monospace;
+	white-space: pre;
 }
